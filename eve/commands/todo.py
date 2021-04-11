@@ -33,8 +33,7 @@ class ANSI:
     reset = '\u001b[0m'
 
 @click.group()
-@click.pass_context
-def cli(ctx) :
+def cli() :
     """Todo application"""
     pass
 
@@ -103,3 +102,10 @@ def ListeUncompleted() :
     Tasks_in_db = Query()
     for i,task in enumerate(db.search(Tasks_in_db.completed == False)) :
         click.echo(u"{1.bold}#{2}: {0[title]}{1.reset} <{0[deadline]}> {1.yellow}[{0[reward]}]{1.reset}\n{0[parent]}: {1.underline}$PATH = {0[path]}{1.reset}\n".format(task, ANSI, i))
+
+@cli.command()
+def startday() :
+    today.truncate()
+    Tasks_in_db = Query()
+    for daily_task in daily :
+        today.insert(db.search(Tasks_in_db.title == daily_task['title'])[0])

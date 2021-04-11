@@ -32,20 +32,11 @@ class ANSI:
     white = '\u001b[37m'
     reset = '\u001b[0m'
 
-
-class Context:
-    def __init__(self, input_) :
-        self.test = "test!"
-        self.input = input_
-
 @click.group()
-#@click.command()
-#@click.option("-a", "--all", type=None, help="Display both Goals and Tasks")
 @click.pass_context
 def cli(ctx) :
     """Todo application"""
-    ctx.obj = Context('val')
-    #click.echo(ctx.obj.test)
+    pass
 
 @cli.command()
 @click.argument("title", required=True, type=str)
@@ -61,10 +52,10 @@ def createTask( title,
                 parent = None,
                 repeatable = False
                 ) :
-    db.insert({  'title': title, 
-                    'deadline': deadline, 
-                    'path': '' if path == None else path, 
-                    'reward': '' if reward == None else reward, 
+    db.insert({  'title': title,
+                    'deadline': deadline,
+                    'path': '' if path == None else path,
+                    'reward': '' if reward == None else reward,
                     'parent': 'master' if parent == None else parent,
                     'completed': False,
                     'repeatable': repeatable})
@@ -83,7 +74,6 @@ def initDBwithdaily() :
 @cli.command()
 @click.argument("task_title", required=True, type=str)
 def schedule(task_title) :
-    #task_title = ctx.obj.input
     Tasks_in_db = Query()
     today.insert(db.search(Tasks_in_db.title == task_title)[0])
 
@@ -103,7 +93,6 @@ def complete() :
     if task['reward'] != '' :
         click.echo("{1.bold}{1.yellow}You earned a reward! :{1.reset}{0[reward]}".format(task, ANSI))
 
-
 @cli.command()
 def ListTasksToday() :
     for i,task in enumerate(today) :
@@ -114,5 +103,3 @@ def ListeUncompleted() :
     Tasks_in_db = Query()
     for i,task in enumerate(db.search(Tasks_in_db.completed == False)) :
         click.echo(u"{1.bold}#{2}: {0[title]}{1.reset} <{0[deadline]}> {1.yellow}[{0[reward]}]{1.reset}\n{0[parent]}: {1.underline}$PATH = {0[path]}{1.reset}\n".format(task, ANSI, i))
-
-
